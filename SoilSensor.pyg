@@ -1,0 +1,28 @@
+import RPi.GPIO as GPIO
+import time
+
+# GPIO Configuration (corresponds to GPIO4 of your wiring)
+channel = 4
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(channel, GPIO.IN)
+
+# Sensor status detection function
+def check_moisture(channel):
+    if GPIO.input(channel):
+        print("Water NOT Detected! Please water your plant.")
+    else:
+        print("Water Detected! Plant is okay.")
+
+# Monitor sensor status changes
+GPIO.add_event_detect(channel, GPIO.BOTH, bouncetime=300)
+GPIO.add_event_callback(channel, check_moisture)
+
+# Keep the script running
+try:
+    print("Sensor test script started, press Ctrl+C to stop...")
+    while True:
+        time.sleep(1)  # Reduce CPU usage
+except KeyboardInterrupt:
+    GPIO.cleanup()  # Clean up GPIO when exiting
+    print("\nScript stopped, GPIO cleaned up")
+
